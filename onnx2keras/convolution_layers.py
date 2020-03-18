@@ -48,7 +48,7 @@ def convert_conv(node, params, layers, node_name, keras_name):
             )
             layers[padding_name] = input_0 = padding_layer(input_0)
         out_channels, channels_per_group, dimension, height, width = W.shape
-        W = W.transpose(2, 3, 4, 1, 0) 
+        W = W.transpose(2, 3, 4, 1, 0)
         in_channels = channels_per_group * n_groups
 
         if n_groups != 1:
@@ -75,7 +75,7 @@ def convert_conv(node, params, layers, node_name, keras_name):
 
     elif len(W.shape) == 4:  # 2D conv
         logger.debug('2D convolution')
-        
+
         padding = None
         if len(pads) == 2 and (pads[0] > 0 or pads[1] > 0):
             padding = (pads[0], pads[1])
@@ -161,7 +161,7 @@ def convert_conv(node, params, layers, node_name, keras_name):
             )
             layers[node_name] = conv(input_0)
 
-    else: 
+    else:
         # 1D conv
         W = W.transpose(2, 1, 0)
         width, channels, n_filters = W.shape
@@ -176,7 +176,7 @@ def convert_conv(node, params, layers, node_name, keras_name):
             import tensorflow as tf
             w = tf.convert_to_tensor(w[0])
             x = tf.transpose(x, [0, 2, 1])
-            x = tf.nn.conv1d(x, w, stride=stride, padding='SAME', data_format='NWC')
+            x = tf.nn.conv1d(x, w, stride=stride, padding='VALID', data_format='NWC')
             return tf.transpose(x, [0, 2, 1])
 
         lambda_layer = keras.layers.Lambda(target_layer, name=keras_name)
